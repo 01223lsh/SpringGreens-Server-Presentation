@@ -1,8 +1,6 @@
 package com.spring_greens.presentation.global.factory.service;
 
 import com.spring_greens.presentation.global.factory.service.ifs.ServiceFactory;
-import com.spring_greens.presentation.global.redis.service.RedisService;
-import com.spring_greens.presentation.mall.service.ifs.MallService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,15 +20,15 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ServiceFactoryImpl implements ServiceFactory {
-    private final RedisService redisService;
-    private final MallService mallService;
-    @Override
-    public RedisService getRedisService() {
-        return redisService;
-    }
-
-    @Override
-    public MallService getMallService() {
-        return mallService;
-    }
+//    private final RedisService redisService;
+//    private final MallService mallService;
+//    @Override
+//    public RedisService getRedisService() {
+//        return redisService;
+//    }
+//
+//    @Override
+//    public MallService getMallService() {
+//        return mallService;
+//    }
 }

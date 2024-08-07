@@ -6,7 +6,9 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ApiMessage {
     SUCCESS(HttpStatus.OK, "Success Request"),
-    FAIL(HttpStatus.BAD_REQUEST, "Failed Request");
+    FAIL(HttpStatus.BAD_REQUEST, "Failed Request"),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "Authentication Required"),
+    FORBIDDEN(HttpStatus.FORBIDDEN, "Access Denied");
 
     private final HttpStatus status;
     private final String responseMessage;

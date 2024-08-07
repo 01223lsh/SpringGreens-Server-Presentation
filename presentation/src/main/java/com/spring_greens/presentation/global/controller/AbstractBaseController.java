@@ -3,8 +3,6 @@ package com.spring_greens.presentation.global.controller;
 import com.spring_greens.presentation.global.api.ApiResponse;
 import com.spring_greens.presentation.global.factory.converter.ifs.ConverterFactory;
 import com.spring_greens.presentation.global.factory.service.ifs.ServiceFactory;
-import com.spring_greens.presentation.product.dto.redis.request.RedisProductRequest;
-import com.spring_greens.presentation.product.dto.redis.response.ifs.RedisProductResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +31,15 @@ public abstract class AbstractBaseController {
     protected final ConverterFactory converterFactory;
     protected final ServiceFactory serviceFactory;
 
-    @GetMapping("/get/products/{domain}/{mall_name}")
-    @Operation(summary="상품 호출하기 메인")
-    protected ApiResponse<RedisProductResponse> getProductsOfMall(@PathVariable("domain") String domain,
-                                                                    @PathVariable("mall_name") String mallName) {
-
-        RedisProductRequest redisProductRequest = converterFactory.getRedisConverter().createRequest(domain, mallName);
-        RedisProductResponse product = serviceFactory.getRedisService().getProductsFromRedisUsingKey(redisProductRequest);
-        return ApiResponse.ok(product);
-    }
+//    @GetMapping("/get/products/{domain}/{mall_name}")
+//    @Operation(summary="상품 호출하기 메인")
+//    protected ApiResponse<RedisProductResponse> getProductsOfMall(@PathVariable("domain") String domain,
+//                                                                    @PathVariable("mall_name") String mallName) {
+//
+//        RedisProductRequest redisProductRequest = converterFactory.getRedisConverter().createRequest(domain, mallName);
+//        RedisProductResponse product = serviceFactory.getRedisService().getProductsFromRedisUsingKey(redisProductRequest);
+//        return ApiResponse.ok(product);
+//    }
 }
 
 

@@ -1,8 +1,6 @@
 package com.spring_greens.presentation.global.factory.converter;
 
 import com.spring_greens.presentation.global.factory.converter.ifs.ConverterFactory;
-import com.spring_greens.presentation.global.redis.converter.ifs.RedisConverter;
-import com.spring_greens.presentation.map.converter.ifs.MallConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -24,7 +22,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ConverterFactoryImpl implements ConverterFactory {
-    @Qualifier(value = "redisConverterImpl")
+/*    @Qualifier(value = "redisConverterImpl")
     private final RedisConverter redisConverter;
     @Qualifier(value = "mallConverterImpl")
     private final MallConverter mallConverter;
@@ -36,5 +34,5 @@ public class ConverterFactoryImpl implements ConverterFactory {
     @Override
     public RedisConverter getRedisConverter() {
         return redisConverter;
-    }
+    }*/
 }
