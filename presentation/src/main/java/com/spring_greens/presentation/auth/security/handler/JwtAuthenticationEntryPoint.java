@@ -1,6 +1,7 @@
 package com.spring_greens.presentation.auth.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring_greens.presentation.auth.config.JwtProperties;
 import com.spring_greens.presentation.auth.dto.CustomUser;
 import com.spring_greens.presentation.auth.entity.RefreshToken;
 import com.spring_greens.presentation.auth.security.provider.JwtProvider;
@@ -28,10 +29,11 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     /* 각 예외에 대한 결과코드만 뿌려줌, RefreshToken 같은 것들 때문에 case 문 추가할지도 */
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationEntryPoint.class);
-
     private final JwtProvider jwtProvider;
-
+    private final JwtProperties jwtProperties;
     private final ObjectMapper objectMapper;
+
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         logger.info("Entry 잘 호출하네");
@@ -47,7 +49,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         switch (jwtErrorCode) {
             case EXPIRED_TOKEN:
                 logger.info("만료된 토큰입니다.");
-                handleExpiredToken(request, response);
+                handleExpiredToken(request, response, jwtErrorCode);
                 break;
             default:
                 logger.info("기타 에러입니다: " + jwtErrorCode);
@@ -57,14 +59,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     private void addRefreshTokenToCookie(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
-        int cookieMaxAge = (int) CustomSuccessHandler.COOKIE_DURATION.toSeconds();
-
-        CookieUtil.deleteCookie(request, response, CustomSuccessHandler.REFRESH_TOKEN_NAME);
-        CookieUtil.addCookie(response, CustomSuccessHandler.REFRESH_TOKEN_NAME, refreshToken, cookieMaxAge);
+        CookieUtil.deleteCookie(request, response, JwtProvider.REFRESH_TOKEN_NAME);
+        CookieUtil.addCookie(response, JwtProvider.REFRESH_TOKEN_NAME, refreshToken, jwtProperties.getRefreshTokenExpiration());
     }
 
-    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String requestRefreshToken = CookieUtil.getCookieValue(request, CustomSuccessHandler.REFRESH_TOKEN_NAME);
+    private void handleExpiredToken(HttpServletRequest request, HttpServletResponse response, JwtErrorCode jwtErrorCode) throws IOException {
+        String requestRefreshToken = CookieUtil.getCookieValue(request, JwtProvider.REFRESH_TOKEN_NAME);
+
         if (requestRefreshToken == null) {
             sendErrorResponse(response, JwtErrorCode.MALFORMED_REFRESH_TOKEN);
             return;
@@ -76,11 +77,6 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         }
 
         CustomUser customUser = jwtProvider.getCustomUser(requestRefreshToken);
-
-//        for (GrantedAuthority authority : customUser.getAuthorities()) {
-//            logger.info("사용자 '{}'의 권한: {}", customUser.getName(), authority.getAuthority());
-//        }
-
         RefreshToken storedRefreshToken = jwtProvider.getRefreshTokenFromDB(customUser.getId());
 
         if (storedRefreshToken == null) {
@@ -93,28 +89,28 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             return;
         }
 
-        refreshTokensAndSendResponse(request, response, customUser);
+        refreshTokensAndSendResponse(request, response, customUser, jwtErrorCode);
     }
 
-    private void refreshTokensAndSendResponse(HttpServletRequest request, HttpServletResponse response, CustomUser customUser) throws IOException {
+    private void refreshTokensAndSendResponse(HttpServletRequest request, HttpServletResponse response, CustomUser customUser, JwtErrorCode jwtErrorCode) throws IOException {
         String accessToken = jwtProvider.generateAccessToken(customUser);
         String refreshToken = jwtProvider.generateRefreshToken(customUser);
 
         addRefreshTokenToCookie(request, response, refreshToken);
 
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put(CustomSuccessHandler.Access_TOKEN_NAME, accessToken);
+        responseBody.put(JwtProvider.Access_TOKEN_NAME, accessToken);
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(jwtErrorCode.getHttpStatus().value());
 
         objectMapper.writeValue(response.getWriter(), responseBody);
     }
 
     private void sendErrorResponse(HttpServletResponse response, JwtErrorCode jwtErrorCode) throws IOException {
         Map<String, String> responseBody = new HashMap<>();
-        responseBody.put("error", jwtErrorCode.getDescription());
+        responseBody.put("error", jwtErrorCode.getMessage());
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");

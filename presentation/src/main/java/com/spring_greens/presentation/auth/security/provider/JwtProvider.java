@@ -4,13 +4,13 @@ import com.spring_greens.presentation.auth.config.JwtProperties;
 import com.spring_greens.presentation.auth.dto.CustomUser;
 import com.spring_greens.presentation.auth.dto.UserDTO;
 import com.spring_greens.presentation.auth.entity.RefreshToken;
-import com.spring_greens.presentation.auth.exception.JwtNotValidateException;
+import com.spring_greens.presentation.global.exception.JwtException;
 import com.spring_greens.presentation.auth.repository.RefreshTokenRepository;
 import com.spring_greens.presentation.global.enums.JwtErrorCode;
+
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.WeakKeyException;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +30,15 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Component
 public class JwtProvider {
-
     private static final Logger logger = LoggerFactory.getLogger(JwtProvider.class);
     private final JwtProperties jwtProperties;
     private final SecretKey secretKey;
     private final RefreshTokenRepository refreshTokenRepository;
+
+    public final static String HEADER_AUTHORIZATION = "Authorization";
+    public final static String TOKEN_PREFIX = "Bearer ";
+    public static final String Access_TOKEN_NAME = "access_token";
+    public static final String REFRESH_TOKEN_NAME = "refresh_token";
 
     @Autowired
     public JwtProvider(JwtProperties jwtProperties, RefreshTokenRepository refreshTokenRepository) {
@@ -59,6 +63,10 @@ public class JwtProvider {
         String token = makeToken(new Date(now.getTime() + jwtProperties.getRefreshTokenExpiration()), customUser);
 
         RefreshToken refreshToken = new RefreshToken(customUser.getId(), token);
+
+        logger.info(token);
+
+        logger.info(customUser.getId()+"");
 
         // DB 저장
         refreshTokenRepository.insertOrUpdateRefreshToken(token, customUser.getId());
@@ -90,8 +98,6 @@ public class JwtProvider {
     private String makeToken(Date expiry, CustomUser customUser) {
         Date now = new Date();
 
-        logger.info(""+customUser.getRole());
-
         return Jwts.builder()
                 .issuer(jwtProperties.getIssuer())
                 .issuedAt(now)
@@ -109,7 +115,7 @@ public class JwtProvider {
         /* java.lang.IllegalArgumentException: CharSequence cannot be null or empty. */
         if (token == null || token.trim().isEmpty()) {
             // 토큰이 없는 경우
-            logger.info(JwtErrorCode.UNKNOWN_TOKEN.getDescription());
+            logger.info(JwtErrorCode.UNKNOWN_TOKEN.getMessage());
             return false;
 //            throw new JwtNotValidateException(JwtErrorCode.UNKNOWN_TOKEN);
         }
@@ -136,26 +142,26 @@ public class JwtProvider {
 */
             // 만료 검증
             if (claims.getExpiration().before(new Date())) {
-                logger.info(JwtErrorCode.EXPIRED_TOKEN.getDescription());
-                throw new JwtNotValidateException(JwtErrorCode.EXPIRED_TOKEN);
+                logger.info(JwtErrorCode.EXPIRED_TOKEN.getMessage());
+                throw new JwtException.JwtNotValidateException(JwtErrorCode.EXPIRED_TOKEN);
             }
             
             return true; // 토큰 정상
         } catch (SignatureException e) {
-            logger.info(JwtErrorCode.WRONG_SIGNATURE_TOKEN.getDescription()+ " exception : " + e);
-            throw new JwtNotValidateException(JwtErrorCode.WRONG_SIGNATURE_TOKEN, e);
+            logger.info(JwtErrorCode.WRONG_SIGNATURE_TOKEN.getMessage()+ " exception : " + e);
+            throw new JwtException.JwtNotValidateException(JwtErrorCode.WRONG_SIGNATURE_TOKEN, e);
         } catch (MalformedJwtException e) {
-            logger.info(JwtErrorCode.MALFORMED_TOKEN.getDescription()+ " exception : " + e);
-            throw new JwtNotValidateException(JwtErrorCode.MALFORMED_TOKEN, e);
+            logger.info(JwtErrorCode.MALFORMED_TOKEN.getMessage()+ " exception : " + e);
+            throw new JwtException.JwtNotValidateException(JwtErrorCode.MALFORMED_TOKEN, e);
         } catch (ExpiredJwtException e) {
-            logger.info(JwtErrorCode.EXPIRED_TOKEN.getDescription()+ " exception : " + e);
-            throw new JwtNotValidateException(JwtErrorCode.EXPIRED_TOKEN, e);
+            logger.info(JwtErrorCode.EXPIRED_TOKEN.getMessage()+ " exception : " + e);
+            throw new JwtException.JwtNotValidateException(JwtErrorCode.EXPIRED_TOKEN, e);
         } catch (UnsupportedJwtException e) {
-            logger.info(JwtErrorCode.UNSUPPORTED_TOKEN.getDescription()+ " exception : " + e);
-            throw new JwtNotValidateException(JwtErrorCode.UNSUPPORTED_TOKEN, e);
+            logger.info(JwtErrorCode.UNSUPPORTED_TOKEN.getMessage()+ " exception : " + e);
+            throw new JwtException.JwtNotValidateException(JwtErrorCode.UNSUPPORTED_TOKEN, e);
         } catch (IllegalArgumentException | DecodingException | WeakKeyException e) {
-            logger.info(JwtErrorCode.INVALID_CLAIMS_TOKEN.getDescription()+ " exception : " + e);
-            throw new JwtNotValidateException(JwtErrorCode.INVALID_CLAIMS_TOKEN, e);
+            logger.info(JwtErrorCode.INVALID_CLAIMS_TOKEN.getMessage()+ " exception : " + e);
+            throw new JwtException.JwtNotValidateException(JwtErrorCode.INVALID_CLAIMS_TOKEN, e);
         }
     }
 
@@ -169,12 +175,13 @@ public class JwtProvider {
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setEmail(claims.getSubject());
-        userDTO.setId(claims.get("id", Long.class));
-        userDTO.setEmail(claims.get("email", String.class));
-        userDTO.setName(claims.get("name", String.class));
-        userDTO.setRole(claims.get("role", String.class));
+        UserDTO userDTO = UserDTO.builder()
+                .email(claims.getSubject())
+                .id(claims.get("id", Long.class))
+                .name(claims.get("name", String.class))
+                .role(claims.get("role", String.class))
+                .build();
+
         CustomUser customUser = new CustomUser(userDTO);
 
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(claims.get("role", String.class)));
@@ -185,12 +192,12 @@ public class JwtProvider {
     public CustomUser getCustomUser(String token) {
         Claims claims = getClaims(token);
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setEmail(claims.getSubject());
-        userDTO.setId(claims.get("id", Long.class));
-        userDTO.setEmail(claims.get("email", String.class));
-        userDTO.setName(claims.get("name", String.class));
-        userDTO.setRole(claims.get("role", String.class));
+        UserDTO userDTO = UserDTO.builder()
+                .email(claims.getSubject())
+                .id(claims.get("id", Long.class))
+                .name(claims.get("name", String.class))
+                .role(claims.get("role", String.class))
+                .build();
 
         return new CustomUser(userDTO);
     }

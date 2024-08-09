@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomUser implements UserDetails, OAuth2User {
-
     private final UserDTO userDTO;
 
     public CustomUser(UserDTO userDTO) { this.userDTO = userDTO; }

@@ -1,10 +1,11 @@
 package com.spring_greens.presentation.auth.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@ToString
 public class UserDTO {
     private long id;
     private String role;

@@ -18,8 +18,8 @@ import javax.crypto.spec.SecretKeySpec;
 public class JwtProperties {
     private String issuer;
     private String secretKey;
-    private long AccessTokenExpiration;
-    private long RefreshTokenExpiration;
+    private int AccessTokenExpiration;
+    private int RefreshTokenExpiration;
 
     // 비밀 키를 SecretKey 객체로 반환하는 메서드
     public SecretKey getSecretKey() {

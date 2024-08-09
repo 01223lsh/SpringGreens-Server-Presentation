@@ -3,9 +3,10 @@ package com.spring_greens.presentation.auth.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "USER")
+@Table(name = "user")
 @Getter
-@Setter
+@Builder
+@ToString
 @Entity
 public class User {
 
@@ -45,4 +46,10 @@ public class User {
 
     @Column(name = "address_details", length = 200)
     private String addressDetails;
+
+    public void updateUserInfo(String email, String name) {
+        this.email = email;
+        this.name = name;
+    }
+
 }

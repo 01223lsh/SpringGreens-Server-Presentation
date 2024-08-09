@@ -5,15 +5,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.util.SerializationUtils;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 
 public class CookieUtil {
 
+    public static final Duration COOKIE_REFRESH_TOKEN_ = Duration.ofDays(1);
+
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(maxAge/1000);
         cookie.setHttpOnly(true); // JavaScript에서 접근하지 못하게 함
         cookie.setSecure(true); // Https에서만 쿠키가 전송되게 함 | 넣을까말까 아마 테스트 중엔 적용 못할텐데
         response.addCookie(cookie);

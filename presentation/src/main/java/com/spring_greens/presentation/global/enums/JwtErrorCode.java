@@ -16,11 +16,11 @@ public enum JwtErrorCode {
     MALFORMED_REFRESH_TOKEN("만료된 엑세스 토큰입니다. 리프레시 토큰이 유효하지 않습니다.", HttpStatus.BAD_REQUEST),
     UNKNOWN_ERROR( "알 수 없는 오류입니다. 관리자에게 문의해주세요.", HttpStatus.BAD_REQUEST);
 
-    private final String description;
+    private final String message;
     private final HttpStatus httpStatus;
 
-    JwtErrorCode(String description, HttpStatus httpStatus) {
-        this.description = description;
+    JwtErrorCode(String message, HttpStatus httpStatus) {
+        this.message = message;
         this.httpStatus = httpStatus;
     }
 }

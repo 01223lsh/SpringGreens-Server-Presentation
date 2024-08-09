@@ -8,8 +8,11 @@ import com.spring_greens.presentation.auth.dto.oauth.KakaoResponse;
 import com.spring_greens.presentation.auth.dto.oauth.NaverResponse;
 import com.spring_greens.presentation.auth.entity.User;
 import com.spring_greens.presentation.auth.repository.UserRepository;
+import com.spring_greens.presentation.auth.security.handler.CustomFailureHandler;
 import com.spring_greens.presentation.global.enums.OAuth2ResponseEnum;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -21,6 +24,8 @@ import java.util.*;
 @RequiredArgsConstructor
 @Service
 public class OAuth2Service extends DefaultOAuth2UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(OAuth2Service.class);
 
     private final UserRepository userRepository;
 
@@ -53,18 +58,22 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     }
 
     private CustomUser registerNewUser(OAuth2Response oAuth2Response) {
-        User user = new User();
-        user.setEmail(oAuth2Response.getEmail());
-        user.setName(oAuth2Response.getName());
-        user.setRole("ROLE_SOCIAL");
-        user.setSocialType(true);
-        user.setSocialName(oAuth2Response.getProvider());
+        User user = User.builder()
+                .email(oAuth2Response.getEmail())
+                .name(oAuth2Response.getName())
+                .role("ROLE_SOCIAL")
+                .socialType(true)
+                .socialName(oAuth2Response.getProvider())
+                .build();
 
         userRepository.save(user);
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setName(oAuth2Response.getName());
-        userDTO.setRole("ROLE_SOCIAL");
+        UserDTO userDTO = UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .build();
 
         return new CustomUser(userDTO);
     }
@@ -74,8 +83,7 @@ public class OAuth2Service extends DefaultOAuth2UserService {
         if (existingUser.getSocialName().equals(oAuth2Response.getProvider())) {
 
             // 엔티티 객체 값 변경
-            existingUser.setEmail(oAuth2Response.getEmail());
-            existingUser.setName(oAuth2Response.getName());
+            existingUser.updateUserInfo(oAuth2Response.getEmail(), oAuth2Response.getName());
 
             // 실제 DB 변경
             userRepository.save(existingUser);
@@ -83,10 +91,11 @@ public class OAuth2Service extends DefaultOAuth2UserService {
     }
 
     private CustomUser createCustomUserDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setName(user.getName());
-        userDTO.setRole(user.getRole());
+        UserDTO userDTO = UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .role(user.getRole())
+                .build();
 
         return new CustomUser(userDTO);
     }

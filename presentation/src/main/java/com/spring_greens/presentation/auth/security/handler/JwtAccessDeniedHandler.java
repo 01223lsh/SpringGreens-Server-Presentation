@@ -13,7 +13,7 @@ import java.io.IOException;
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        /** 403 권한 거부 에러를 뱉는다. | 권한 부족 관련 Exception Handler로 기능 추가 가능 */
+        /** 403 권한 거부 에러를 뱉는다. | 프론트에서 사용자 권한 부족 Alert 표출 필요 | 권한 부족 관련 Exception Handler로 기능 추가 가능 */
         response.sendError(HttpServletResponse.SC_FORBIDDEN);
     }
 }

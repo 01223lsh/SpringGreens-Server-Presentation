@@ -30,6 +30,7 @@ public class WebOAuthSecurityConfig {
 
     private final OAuth2Service oAuth2Service;
     private final JwtProvider jwtProvider;
+    private final JwtProperties jwtProperties;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final ObjectMapper objectMapper;
 
@@ -63,11 +64,6 @@ public class WebOAuthSecurityConfig {
                         .successHandler(customSuccessHandler())
                         .failureHandler(customFailureHandler())
                 )
-//                .exceptionHandling(exceptionHandling ->
-//                         exceptionHandling
-//                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-//                                .accessDeniedHandler(jwtAccessDeniedHandler)
-//                        )
                 .exceptionHandling(exceptionHandling ->
                         exceptionHandling
                                 .authenticationEntryPoint(jwtAuthenticationEntryPoint())
@@ -76,16 +72,9 @@ public class WebOAuthSecurityConfig {
                 .build();
     }
 
-/*    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtProvider);
-    }*/
-
-
-
     @Bean
     public CustomSuccessHandler customSuccessHandler() {
-        return new CustomSuccessHandler(jwtProvider, objectMapper);
+        return new CustomSuccessHandler(jwtProvider, jwtProperties, objectMapper);
     }
 
     @Bean
@@ -95,7 +84,7 @@ public class WebOAuthSecurityConfig {
 
     @Bean
     public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint() {
-        return new JwtAuthenticationEntryPoint(jwtProvider, objectMapper);
+        return new JwtAuthenticationEntryPoint(jwtProvider, jwtProperties, objectMapper);
     }
 
 }
