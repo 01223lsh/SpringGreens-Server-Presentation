@@ -1,3 +1,4 @@
+/*
 package com.spring_greens.presentation.auth.config;
 
 import org.springframework.context.annotation.Bean;
@@ -32,7 +33,7 @@ public class SecurityConfig {
         //세션 사용 X
         http.sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         //인가
-        http.authorizeHttpRequests((authorizeHttpRequests) -> 
+        http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                     //로그인 페이지는 모두 가능
                     .requestMatchers("/member/login").permitAll()
@@ -41,8 +42,8 @@ public class SecurityConfig {
                     //제외 페이지는 모두 권한이 있어야만 가능.
                     .anyRequest().authenticated());
         //필터 순서(jwt필터를 usernamePassword 필터 앞에 실행되도록.)(로그인 전에 JWT를 이용해 추가 로그인 확인 없이도 실행하도록 함. 컨텍스트 홀더에 그냥 넣어버림.)
-        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);   
-    
+        http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
@@ -51,5 +52,6 @@ public class SecurityConfig {
         //BCrypt Encoder 사용
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
-    
+
 }
+*/

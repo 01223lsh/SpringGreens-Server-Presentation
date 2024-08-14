@@ -1,15 +1,12 @@
 package com.spring_greens.presentation.auth.dto;
 
-import java.util.Date;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.spring_greens.presentation.auth.entity.Member;
 
-import lombok.AllArgsConstructor;
+import com.spring_greens.presentation.auth.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,7 @@ import java.time.LocalDateTime;
 @Getter
 @ToString
 @NoArgsConstructor
-public class SignUpDto {
+public class SignUpDTO {
     private String email;
     private String contact;
     private String password;
@@ -36,7 +33,7 @@ public class SignUpDto {
     private LocalDateTime lastAccessTime;
 
     @Builder
-    public SignUpDto(String email, String contact, String password, LocalDateTime registrationData, String accountType, LocalDateTime lastAccessTime){
+    public SignUpDTO(String email, String contact, String password, LocalDateTime registrationData, String accountType, LocalDateTime lastAccessTime){
         this.email = email;
         this.contact = contact;
         this.password = password;
@@ -44,13 +41,10 @@ public class SignUpDto {
         this.accountType = accountType;
         this.registrationData = registrationData;
     }
-    public Member toEntity(String encodedPassword, String accountType){
-        return Member.builder()
-            .accountType(accountType)
+    public User toEntity(String encodedPassword, String accountType){
+        return User.builder()
             .contact(contact)
             .email(email)
-            .lastAccessTime(lastAccessTime)
-            .password(encodedPassword)
-            .registrationData(registrationData).build();
+            .password(encodedPassword).build();
     }
 }

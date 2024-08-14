@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TokenDto {
+public class TokenDTO {
     private String grantType;
     private String accessToken;
     private String refreshToken;
 
    @Builder
-   public TokenDto(String grantType, String accessToken, String refreshToken){
+   public TokenDTO(String grantType, String accessToken, String refreshToken){
     this.grantType = grantType;
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;

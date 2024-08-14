@@ -163,7 +163,7 @@ public class JwtProvider {
      */
     private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey) // ?„œëª? ?‚¤ ?„¤? •
+                .verifyWith(secretKey) // ?ï¿½ï¿½ï¿½? ?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½
                 .build()
                 .parseSignedClaims(token).getPayload();
     }
@@ -173,7 +173,7 @@ public class JwtProvider {
      * <p>
      * Parses the token to extract user details and authorities for authentication.
      * </p>
-     */v
+     */
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
 

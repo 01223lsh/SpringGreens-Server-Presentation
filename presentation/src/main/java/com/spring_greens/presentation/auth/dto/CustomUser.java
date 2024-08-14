@@ -27,14 +27,12 @@ public class CustomUser implements UserDetails, OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // ê¶Œí•œ ëª©ë¡ ?ƒ?„±
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(() -> userDTO.getRole().getRoleName());
 
         return authorities;
     }
 
-    // ?¼ë°˜ê³¼ ?†µ?•©
     @Override
     public String getPassword() { return userDTO.getPassword(); }
     @Override
@@ -46,13 +44,12 @@ public class CustomUser implements UserDetails, OAuth2User {
 
     public Long getId() { return userDTO.getId(); }
     public String getEmail() {return userDTO.getEmail();}
-   
-    /*ê¶Œí•œ ?—¬?Ÿ¬ê°œë¡œ ë°”ë?Œë©´ ?ˆ˜? • ?•„?š”*/
+
+    /*ê¶Œí•œ ì—¬ëŸ¬ê°œë¡œ ë°”ë€Œë©´ ìˆ˜ì • í•„ìš”*/
     public String getRole() {
         return userDTO.getRole().getRoleName();
     }
-    
-    // ì¶”ê??? ?¸ ê²?ì¦? ?•„?š”
+
     @Override
     public boolean isAccountNonExpired() {
         return true;

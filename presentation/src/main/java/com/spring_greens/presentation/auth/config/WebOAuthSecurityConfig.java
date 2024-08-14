@@ -1,13 +1,13 @@
-package com.spring_greens.presentation.auth.config;
+﻿package com.spring_greens.presentation.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jose.crypto.impl.AAD;
 import com.spring_greens.presentation.auth.security.filter.CustomLogoutFilter;
+import com.spring_greens.presentation.auth.security.filter.JsonAuthenticationFilter;
 import com.spring_greens.presentation.auth.security.handler.CustomFailureHandler;
 import com.spring_greens.presentation.auth.security.handler.CustomSuccessHandler;
 import com.spring_greens.presentation.auth.security.handler.JwtAccessDeniedHandler;
 import com.spring_greens.presentation.auth.security.handler.JwtAuthenticationEntryPoint;
-import com.spring_greens.presentation.auth.security.filter.JsonAuthenticationFilter;
 import com.spring_greens.presentation.auth.security.filter.JwtAuthenticationFilter;
 import com.spring_greens.presentation.auth.security.provider.JwtProvider;
 import com.spring_greens.presentation.auth.service.OAuth2Service;
@@ -49,18 +49,18 @@ public class WebOAuthSecurityConfig {
     private final ObjectMapper objectMapper;
     private final UserService userService;
 
+
     @Bean
     public WebSecurityCustomizer configure() {
         return (web) -> web.ignoring()
                 .requestMatchers(
-                        new AntPathRequestMatcher("/img/**"),   // ?��미�?? ?��?�� ?���?
-                        new AntPathRequestMatcher("/css/**"),   // CSS ?��?�� ?���?
-                        new AntPathRequestMatcher("/js/**"),    // JavaScript ?��?�� ?���?
-                        new AntPathRequestMatcher("/favicon.ico"), // ?��?��?��?�� ?��비콘 ?���?
-                        new AntPathRequestMatcher("/resources/**"), // 리소?�� ?���?
-                        new AntPathRequestMatcher("/swagger-ui/**"), // Swagger UI ?���?
-                        new AntPathRequestMatcher("/v2/api-docs") // Swagger API 문서 ?���?
-
+                        new AntPathRequestMatcher("/img/**"),   // 이미지 파일 요청
+                        new AntPathRequestMatcher("/css/**"),   // CSS 파일 요청
+                        new AntPathRequestMatcher("/js/**"),    // JavaScript 파일 요청
+                        new AntPathRequestMatcher("/favicon.ico"), // 사이트의 파비콘 요청
+                        new AntPathRequestMatcher("/resources/**"), // 리소스 요청
+                        new AntPathRequestMatcher("/swagger-ui/**"), // Swagger UI 요청
+                        new AntPathRequestMatcher("/v2/api-docs") // Swagger API 문서 요청
                 );
     }
 
@@ -68,20 +68,20 @@ public class WebOAuthSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable) // csrf disable
-                .formLogin(AbstractHttpConfigurer::disable) // form 로그?�� 방식(default 방식) disable
-                .httpBasic(AbstractHttpConfigurer::disable) // http basic ?���? 방식 disable
+//                .formLogin(AbstractHttpConfigurer::disable) // form 로그인 방식(default 방식) disable
+                .httpBasic(AbstractHttpConfigurer::disable) // http basic 인증 방식 disable
                 .logout(AbstractHttpConfigurer::disable)// logout disable
                 .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .addFilterAfter(JsonAuthenticationFilter(), LogoutFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new CustomLogoutFilter(jwtProvider, objectMapper), LogoutFilter.class)
-                .addFilterAfter(JsonAuthenticationFilter(), LogoutFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(PUBLIC_URLS_GLOBAL).permitAll() // Global
-                        .requestMatchers(PUBLIC_URLS_AUTH).permitAll() // Auth
+                                .requestMatchers(PUBLIC_URLS_GLOBAL).permitAll() // Global
+                                .requestMatchers(PUBLIC_URLS_AUTH).permitAll() // Auth
 //                        .requestMatchers(AUTHORIZED_URLS_SOCIAL).hasRole("ROLE_SOCIAL") // AUTHORIZED Social
 //                        .requestMatchers(AUTHORIZED_URLS_RETAILER).hasRole("ROLE_RETAILER") // AUTHORIZED Restailer
 //                        .requestMatchers(AUTHORIZED_URLS_WHOLESALER).hasRole("ROLE_WHOLESALER") // AUTHORIZED Wholsesaler
-                        .anyRequest().authenticated() // ?��머�?? 모든 ?���???? ?���? ?��?��
+                                .anyRequest().authenticated() // 나머지 모든 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
@@ -118,7 +118,7 @@ public class WebOAuthSecurityConfig {
     }
 
     public PasswordEncoder passwordEncoder(){
-        DelegatingPasswordEncoder delegatingPasswordEncoder = 
+        DelegatingPasswordEncoder delegatingPasswordEncoder =
     			(DelegatingPasswordEncoder) PasswordEncoderFactories.createDelegatingPasswordEncoder();
         delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new BCryptPasswordEncoder());
 

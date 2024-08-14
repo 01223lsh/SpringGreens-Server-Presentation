@@ -49,10 +49,13 @@ public class User {
     @Column(name = "address_details", length = 200)
     private String addressDetails;
 
+    @Column(name = "password")
+    private String password;
+
     @Builder
     public User(Long id, Role role, String email, String contact, String businessNumber,
                 String name, boolean alertType, boolean termsType, boolean socialType,
-                String socialName, String roadAddress, String addressDetails) {
+                String socialName, String roadAddress, String addressDetails, String password) {
         this.id = id;
         this.role = role;
         this.email = email;
@@ -65,6 +68,7 @@ public class User {
         this.socialName = socialName;
         this.roadAddress = roadAddress;
         this.addressDetails = addressDetails;
+        this.password = password;
     }
 
     public User updateUserInfo(String email, String name) {

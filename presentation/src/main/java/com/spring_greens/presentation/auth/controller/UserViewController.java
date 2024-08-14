@@ -1,10 +1,9 @@
+
 package com.spring_greens.presentation.auth.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 
 import com.spring_greens.presentation.auth.dto.RetailSignupDTO;
 import com.spring_greens.presentation.auth.dto.UserDTO;
@@ -16,11 +15,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@Slf4j
 @AllArgsConstructor
 @Controller
 public class UserViewController {
-
     private final UserService userService;
 
     @GetMapping("/")
@@ -33,20 +30,15 @@ public class UserViewController {
 
     @PostMapping("/signup/retail")
     public String retailRegister(@RequestBody RetailSignupDTO retailSignupDTO) {
-        //?†Œë§? ?šŒ?›ê°??…
+        //ì†Œë§¤ íšŒì›ê°€ì…
         userService.retailRegister(retailSignupDTO);
         return "retailRegister";
     }
 
     @PostMapping("/signup/wholesale")
     public String postMethodName(@RequestBody WholesaleSignupDTO wholesaleSignupDTO) {
-        //?„ë§? ?šŒ?›ê°??…
-        userService.wholesaleRegister(wholesaleSignupDTO);        
+        //ë„ë§¤ íšŒì›ê°€ì…
+        userService.wholesaleRegister(wholesaleSignupDTO);
         return"wholeRegister";
-    }
-    
-    @GetMapping("/callback")
-    public String callback(@RequestParam("code") String code) {
-        return "callback";
     }
 }
