@@ -3,12 +3,13 @@ package com.spring_greens.presentation.auth.dto;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-
+import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class CustomUser implements UserDetails, OAuth2User {
     private final UserDTO userDTO;
 
@@ -26,17 +27,19 @@ public class CustomUser implements UserDetails, OAuth2User {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // ê¶Œí•œ ëª©ë¡ ìƒì„±
+        // ê¶Œí•œ ëª©ë¡ ?ƒ?„±
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(() -> userDTO.getRole().getRoleName());
+
         return authorities;
     }
 
-    // ì¼ë°˜ê³¼ í†µí•©
+    // ?¼ë°˜ê³¼ ?†µ?•©
     @Override
     public String getPassword() { return userDTO.getPassword(); }
     @Override
     public String getName() { return userDTO.getName(); }
+
     public String getUsername() {
         return userDTO.getName();
     }
@@ -44,29 +47,29 @@ public class CustomUser implements UserDetails, OAuth2User {
     public Long getId() { return userDTO.getId(); }
     public String getEmail() {return userDTO.getEmail();}
    
-    /*ê¶Œí•œ ì—¬ëŸ¬ê°œë¡œ ë°”ë€Œë©´ ìˆ˜ì • í•„ìš”*/
+    /*ê¶Œí•œ ?—¬?Ÿ¬ê°œë¡œ ë°”ë?Œë©´ ?ˆ˜? • ?•„?š”*/
     public String getRole() {
         return userDTO.getRole().getRoleName();
     }
     
-    // ì¶”ê°€ì ì¸ ê²€ì¦ í•„ìš”
+    // ì¶”ê??? ?¸ ê²?ì¦? ?•„?š”
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
 }

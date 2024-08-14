@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class ServiceFactoryImpl implements ServiceFactory {
-
     private final RedisService redisService;
     private final MallService mallService;
     private final FcmService fcmService;

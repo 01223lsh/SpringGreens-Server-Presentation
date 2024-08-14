@@ -46,9 +46,9 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security") // security 6.3.1
 	testImplementation("org.springframework.security:spring-security-test")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client") // Oauth2
-	implementation("io.jsonwebtoken:jjwt-api:0.12.3") // jwt
-	implementation("io.jsonwebtoken:jjwt-impl:0.12.3") // jwt
-	implementation("io.jsonwebtoken:jjwt-jackson:0.12.3") // jwt
+	implementation("io.jsonwebtoken:jjwt-api:0.12.5") // jwt
+	implementation("io.jsonwebtoken:jjwt-impl:0.12.5") // jwt
+	implementation("io.jsonwebtoken:jjwt-jackson:0.12.5") // jwt
 }
 
 tasks.withType<Test> {

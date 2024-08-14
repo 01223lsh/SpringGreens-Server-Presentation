@@ -5,7 +5,6 @@ import com.spring_greens.presentation.global.redis.service.RedisService;
 import com.spring_greens.presentation.mall.service.ifs.MallService;
 import com.spring_greens.presentation.shop.service.ShopService;
 
-
 public interface ServiceFactory {
     RedisService getRedisService();
 

@@ -20,14 +20,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-
 import javax.crypto.SecretKey;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
-
 
 /**
  * Provides utility methods for generating, validating, and parsing JWT tokens.
@@ -117,7 +114,6 @@ public class JwtProvider {
                 .compact();
     }
 
-
     /**
      * Validates the given JWT token.
      * <p>
@@ -165,9 +161,9 @@ public class JwtProvider {
     /**
      * Parses the given JWT token and retrieves its claims.
      */
-     private Claims getClaims(String token) {
+    private Claims getClaims(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey) // ì„œëª… í‚¤ ì„¤ì •
+                .verifyWith(secretKey) // ?„œëª? ?‚¤ ?„¤? •
                 .build()
                 .parseSignedClaims(token).getPayload();
     }
@@ -177,7 +173,7 @@ public class JwtProvider {
      * <p>
      * Parses the token to extract user details and authorities for authentication.
      * </p>
-     */
+     */v
     public Authentication getAuthentication(String token) {
         Claims claims = getClaims(token);
 
@@ -189,7 +185,6 @@ public class JwtProvider {
                 .build();
 
         CustomUser customUser = new CustomUser(userDTO);
-
         Set<SimpleGrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(claims.get("role", String.class)));
 
         return new UsernamePasswordAuthenticationToken(customUser, token, authorities);

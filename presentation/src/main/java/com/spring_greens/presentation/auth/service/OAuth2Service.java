@@ -14,7 +14,6 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 /**
@@ -99,8 +98,8 @@ public class OAuth2Service extends DefaultOAuth2UserService {
                 .name(user.getName())
                 .role(user.getRole())
                 .build();
-        log.info("New user registered: ID={}, Email={}, Name={}, Role={}", user.getId(), user.getEmail(), user.getName(), user.getRole());
 
+        log.info("New user registered: ID={}, Email={}, Name={}, Role={}", user.getId(), user.getEmail(), user.getName(), user.getRole());
         return new CustomUser(userDTO);
     }
 
