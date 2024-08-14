@@ -1,5 +1,6 @@
 package com.spring_greens.presentation.auth.dto;
 
+import com.spring_greens.presentation.global.enums.Role;
 import lombok.*;
 
 @Getter
@@ -8,7 +9,8 @@ import lombok.*;
 @ToString
 public class UserDTO {
     private long id;
-    private String role;
+    private Role role;
     private String name;
     private String email;
+    private String password;
 }

@@ -1,21 +1,23 @@
 package com.spring_greens.presentation.auth.entity;
 
+import com.spring_greens.presentation.global.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Table(name = "user")
-@Getter
-@Builder
-@ToString
-@Entity
-public class User {
 
+@Entity
+@Table(name = "user")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@ToString
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "role", nullable = false)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "email", nullable = false, length = 100)
     private String email;
@@ -47,9 +49,27 @@ public class User {
     @Column(name = "address_details", length = 200)
     private String addressDetails;
 
-    public void updateUserInfo(String email, String name) {
+    @Builder
+    public User(Long id, Role role, String email, String contact, String businessNumber,
+                String name, boolean alertType, boolean termsType, boolean socialType,
+                String socialName, String roadAddress, String addressDetails) {
+        this.id = id;
+        this.role = role;
         this.email = email;
+        this.contact = contact;
+        this.businessNumber = businessNumber;
         this.name = name;
+        this.alertType = alertType;
+        this.termsType = termsType;
+        this.socialType = socialType;
+        this.socialName = socialName;
+        this.roadAddress = roadAddress;
+        this.addressDetails = addressDetails;
     }
 
+    public User updateUserInfo(String email, String name) {
+        this.email = email;
+        this.name = name;
+        return this;
+    }
 }

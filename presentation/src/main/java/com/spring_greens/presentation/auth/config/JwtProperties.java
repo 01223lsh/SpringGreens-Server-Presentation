@@ -21,9 +21,8 @@ public class JwtProperties {
     private int AccessTokenExpiration;
     private int RefreshTokenExpiration;
 
-    // 비밀 키를 SecretKey 객체로 반환하는 메서드
     public SecretKey getSecretKey() {
-//        byte[] keyBytes = Decoders.BASE64.decode(this.secretKey); // 디코딩 할 필요없지않나
+//        byte[] keyBytes = Decoders.BASE64.decode(this.secretKey);
 //        return new SecretKeySpec(secretKey.getBytes(), "HmacSHA512");
         return Keys.hmacShaKeyFor(secretKey.getBytes());
     }

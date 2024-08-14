@@ -28,21 +28,15 @@ public class CustomUser implements UserDetails, OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // 권한 목록 생성
         List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(() -> userDTO.getRole());
+        authorities.add(() -> userDTO.getRole().getRoleName());
         return authorities;
     }
 
     // 일반과 통합
     @Override
-    public String getPassword() {
-        return null;
-    }
-
+    public String getPassword() { return userDTO.getPassword(); }
     @Override
-    public String getName() {
-        return userDTO.getName();
-    }
-
+    public String getName() { return userDTO.getName(); }
     public String getUsername() {
         return userDTO.getName();
     }
@@ -52,7 +46,7 @@ public class CustomUser implements UserDetails, OAuth2User {
    
     /*권한 여러개로 바뀌면 수정 필요*/
     public String getRole() {
-        return userDTO.getRole();
+        return userDTO.getRole().getRoleName();
     }
     
     // 추가적인 검증 필요

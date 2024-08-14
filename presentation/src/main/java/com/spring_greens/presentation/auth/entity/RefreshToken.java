@@ -8,17 +8,13 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+
+@Entity
 @Table(name = "refresh_token")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @ToString
-@Entity
 public class RefreshToken {
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "id", updatable = false)
-//    private Long id;
-
     @Id
     @Column(name = "user_id", nullable = false, unique = true)
     private Long userId;

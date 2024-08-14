@@ -9,16 +9,28 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 
+/**
+ * Utility class for handling cookies in HTTP requests and responses.
+ * <p>
+ * This utility is specifically designed to handle cookies related to refresh tokens.
+ * including:
+ * <ul>
+ *     <li>Adding cookies to the response.</li>
+ *     <li>Deleting cookies from the response.</li>
+ *     <li>Serializing and deserializing objects to/from cookie values.</li>
+ *     <li>Retrieving cookie values from requests.</li>
+ * </ul>
+ * </p>
+ *
+ * @author 01223lsh
+ */
 public class CookieUtil {
-
-    public static final Duration COOKIE_REFRESH_TOKEN_ = Duration.ofDays(1);
-
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setMaxAge(maxAge/1000);
-        cookie.setHttpOnly(true); // JavaScript에서 접근하지 못하게 함
-        cookie.setSecure(true); // Https에서만 쿠키가 전송되게 함 | 넣을까말까 아마 테스트 중엔 적용 못할텐데
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
         response.addCookie(cookie);
     }
 

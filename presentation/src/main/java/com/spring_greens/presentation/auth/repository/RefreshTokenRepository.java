@@ -12,9 +12,11 @@ import java.util.Optional;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByUserId(Long userId);
     Optional<RefreshToken> findByRefreshToken(String refreshToken);
-
     void deleteByUserId(Long userId);
 
+    /**
+     * Inserts a new refresh token or updates an existing one based on the user ID.
+     */
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO refresh_token (user_id, refresh_token, created_date, changed_date) " +
